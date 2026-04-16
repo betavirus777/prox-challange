@@ -1,0 +1,18 @@
+[
+  {"process": "MIG", "inputVoltage": "240V", "amperage": 200, "dutyCyclePercent": 25, "volts": 24, "notes": "Typical high-output point; see manual table for 100% duty current"},
+  {"process": "MIG", "inputVoltage": "240V", "amperage": 115, "dutyCyclePercent": 100, "volts": 21, "notes": "100% duty reference (verify in manual)"},
+  {"process": "MIG", "inputVoltage": "240V", "amperage": 150, "dutyCyclePercent": 40, "volts": 22, "notes": ""},
+  {"process": "MIG", "inputVoltage": "240V", "amperage": 100, "dutyCyclePercent": 60, "volts": 19, "notes": "Moderate duty at mid-range"},
+  {"process": "MIG", "inputVoltage": "120V", "amperage": 140, "dutyCyclePercent": 20, "volts": 21, "notes": "Maximum output on 120V MIG"},
+  {"process": "MIG", "inputVoltage": "120V", "amperage": 90, "dutyCyclePercent": 40, "volts": 18, "notes": ""},
+  {"process": "Flux-Cored", "inputVoltage": "240V", "amperage": 200, "dutyCyclePercent": 25, "volts": 24, "notes": "Align with MIG FCAW limits in manual"},
+  {"process": "Flux-Cored", "inputVoltage": "240V", "amperage": 150, "dutyCyclePercent": 40, "volts": 22, "notes": ""},
+  {"process": "Flux-Cored", "inputVoltage": "120V", "amperage": 140, "dutyCyclePercent": 20, "volts": 21, "notes": "Maximum output on 120V FCAW"},
+  {"process": "TIG", "inputVoltage": "240V", "amperage": 175, "dutyCyclePercent": 30, "volts": 18, "notes": "DC TIG max output reference"},
+  {"process": "TIG", "inputVoltage": "240V", "amperage": 105, "dutyCyclePercent": 100, "volts": 16, "notes": "100% duty reference (verify in manual)"},
+  {"process": "TIG", "inputVoltage": "240V", "amperage": 150, "dutyCyclePercent": 40, "volts": 16, "notes": ""},
+  {"process": "TIG", "inputVoltage": "120V", "amperage": 140, "dutyCyclePercent": 20, "volts": 15, "notes": "Maximum output on 120V TIG"},
+  {"process": "Stick", "inputVoltage": "240V", "amperage": 175, "dutyCyclePercent": 25, "volts": 28, "notes": "Maximum output SMAW reference"},
+  {"process": "Stick", "inputVoltage": "240V", "amperage": 160, "dutyCyclePercent": 30, "volts": 26, "notes": ""},
+  {"process": "Stick", "inputVoltage": "120V", "amperage": 140, "dutyCyclePercent": 20, "volts": 25, "notes": "Maximum output on 120V Stick"}
+]

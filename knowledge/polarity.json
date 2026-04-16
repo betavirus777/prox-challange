@@ -1,0 +1,47 @@
+[
+  {
+    "process": "MIG (GMAW)",
+    "polarity": "DCEP",
+    "positiveTerminal": "Work clamp connects to negative (-) terminal. Weld gun/MIG cable connects to positive (+) terminal (Euro connector).",
+    "negativeTerminal": "See positiveTerminal",
+    "gasRequired": true,
+    "gasType": "75% Argon / 25% CO2 (common mix) or 100% CO2",
+    "notes": "DCEP = Direct Current Electrode Positive. The MIG gun is the electrode and connects to the positive terminal."
+  },
+  {
+    "process": "Flux-Cored (FCAW) Self-Shielded",
+    "polarity": "DCEN",
+    "positiveTerminal": "Work clamp connects to positive (+) terminal. Weld gun/MIG cable connects to negative (-) terminal.",
+    "negativeTerminal": "See positiveTerminal",
+    "gasRequired": false,
+    "gasType": "None (self-shielded)",
+    "notes": "DCEN = Direct Current Electrode Negative. Polarity is REVERSED from MIG. Must switch leads at the front panel terminals."
+  },
+  {
+    "process": "Flux-Cored (FCAW) Gas-Shielded",
+    "polarity": "DCEP",
+    "positiveTerminal": "Same as MIG setup. Work clamp to negative, gun to positive.",
+    "negativeTerminal": "See positiveTerminal",
+    "gasRequired": true,
+    "gasType": "75% Argon / 25% CO2",
+    "notes": "Gas-shielded flux-cored uses the same polarity as MIG (DCEP)."
+  },
+  {
+    "process": "TIG (GTAW)",
+    "polarity": "DCEN",
+    "positiveTerminal": "Work clamp connects to positive (+) terminal.",
+    "negativeTerminal": "TIG torch connects to negative (-) terminal using the TIG adapter/dinse connector.",
+    "gasRequired": true,
+    "gasType": "100% Argon",
+    "notes": "DCEN = Direct Current Electrode Negative. DC TIG only (no AC TIG on this machine). Use the TIG torch dinse connector in the negative terminal."
+  },
+  {
+    "process": "Stick (SMAW)",
+    "polarity": "DCEP or DCEN",
+    "positiveTerminal": "Depends on electrode type. Most electrodes (E6013, E7018) use DCEP: electrode holder to positive, work clamp to negative.",
+    "negativeTerminal": "Some electrodes (E6011) can use DCEN: electrode holder to negative, work clamp to positive.",
+    "gasRequired": false,
+    "gasType": "None",
+    "notes": "Check electrode packaging for recommended polarity. E6013 = DCEP or AC. E7018 = DCEP. E6010/E6011 = DCEP."
+  }
+]

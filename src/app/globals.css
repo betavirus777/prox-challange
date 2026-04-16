@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --muted: #1a1a1a;
+  --muted-foreground: #a1a1a1;
+  --border: #2a2a2a;
+  --accent: #f97316;
+  --accent-foreground: #fff;
+  --card: #111111;
+  --card-foreground: #ededed;
+  --primary: #f97316;
+  --primary-foreground: #fff;
+  --destructive: #ef4444;
+  --ring: #f97316;
+  --citation-manual: #3b82f6;
+  --citation-video: #22c55e;
+  --citation-quickstart: #f59e0b;
+  --citation-chart: #a855f7;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+/* Citation badge colors */
+.citation-manual { background: var(--citation-manual); }
+.citation-video { background: var(--citation-video); }
+.citation-quickstart { background: var(--citation-quickstart); }
+.citation-chart { background: var(--citation-chart); }
+
+/* Voice pulse animation */
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  50% { transform: scale(1.2); opacity: 0; }
+  100% { transform: scale(0.8); opacity: 0.5; }
+}
+.voice-pulse {
+  animation: pulse-ring 1.5s ease-in-out infinite;
+}

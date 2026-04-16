@@ -1,0 +1,117 @@
+[
+  {
+    "problem": "Porosity in welds",
+    "causes": [
+      "Insufficient gas coverage or gas flow rate too low/high",
+      "Contaminated base metal (oil, rust, paint, moisture)",
+      "Gas nozzle clogged with spatter",
+      "Wind or drafts blowing shielding gas away",
+      "Gas cylinder empty or regulator malfunction",
+      "Excessive electrode stickout",
+      "Wrong shielding gas for the process"
+    ],
+    "solutions": [
+      "Check gas flow rate (typically 20-25 CFH for MIG)",
+      "Clean base metal thoroughly before welding (grind, wire brush, or solvent clean)",
+      "Clean or replace gas nozzle and contact tip",
+      "Block wind/drafts or use wind screens",
+      "Verify gas supply and check for leaks in gas hose",
+      "Reduce electrode stickout to 3/8\" to 1/2\"",
+      "Verify correct gas type (75/25 Ar/CO2 for MIG, 100% Argon for TIG)"
+    ],
+    "sourcePage": 38
+  },
+  {
+    "problem": "Excessive spatter",
+    "causes": [
+      "Voltage too high or too low",
+      "Wire feed speed incorrect",
+      "Wrong polarity for the process",
+      "Arc length too long",
+      "Contaminated base metal",
+      "Wrong shielding gas"
+    ],
+    "solutions": [
+      "Adjust voltage — use the synergic settings as a starting point",
+      "Adjust wire feed speed to match voltage",
+      "Verify correct polarity (DCEP for MIG, DCEN for self-shielded flux-cored)",
+      "Maintain proper arc length (about 3/8\")",
+      "Clean base metal before welding",
+      "Use correct gas (75/25 Ar/CO2 or 100% CO2 for MIG)"
+    ],
+    "sourcePage": 38
+  },
+  {
+    "problem": "Wire feed issues / wire not feeding smoothly",
+    "causes": [
+      "Drive roll tension too loose or too tight",
+      "Wrong drive roll type for wire size",
+      "Liner kinked or clogged",
+      "Contact tip worn or wrong size",
+      "Wire spool brake too tight",
+      "Bird-nesting (tangled wire at drive rolls)"
+    ],
+    "solutions": [
+      "Adjust drive roll tension — wire should slip with light finger pressure on the spool",
+      "Use knurled drive rolls for flux-cored wire, smooth/V-groove for solid wire",
+      "Replace liner if kinked; blow out with compressed air if clogged",
+      "Replace contact tip and ensure correct size for wire diameter",
+      "Adjust spool brake tension — spool should stop freely without unraveling",
+      "Cut out tangled wire, re-thread through drive rolls and liner"
+    ],
+    "sourcePage": 36
+  },
+  {
+    "problem": "No arc / machine won't weld",
+    "causes": [
+      "Work clamp not connected or poor ground connection",
+      "Wrong process selected on LCD",
+      "Trigger switch malfunction",
+      "Thermal overload tripped (duty cycle exceeded)",
+      "Power supply issue",
+      "Wire not reaching contact tip"
+    ],
+    "solutions": [
+      "Verify work clamp is securely attached to clean bare metal",
+      "Check LCD display and select correct welding process",
+      "Check MIG gun trigger cable connection",
+      "Wait for machine to cool down (thermal overload resets automatically)",
+      "Check input power — verify correct voltage (120V or 240V)",
+      "Trim wire flush with contact tip, check wire feed"
+    ],
+    "sourcePage": 37
+  },
+  {
+    "problem": "Burn-through on thin material",
+    "causes": [
+      "Amperage too high",
+      "Travel speed too slow",
+      "Wrong wire size for material thickness",
+      "Gap between pieces too large"
+    ],
+    "solutions": [
+      "Reduce amperage/wire feed speed",
+      "Increase travel speed",
+      "Use 0.023\" or 0.030\" wire for thin materials",
+      "Ensure tight fit-up with minimal gap",
+      "Use stitch (intermittent) welding technique"
+    ],
+    "sourcePage": 39
+  },
+  {
+    "problem": "Weld too cold / lack of fusion",
+    "causes": [
+      "Amperage too low",
+      "Travel speed too fast",
+      "Electrode stickout too long",
+      "Wrong polarity"
+    ],
+    "solutions": [
+      "Increase amperage/wire feed speed",
+      "Slow down travel speed",
+      "Reduce electrode stickout to 3/8\" to 1/2\"",
+      "Verify correct polarity for your process"
+    ],
+    "sourcePage": 39
+  }
+]

@@ -1,0 +1,34 @@
+{
+  "model": "Vulcan OmniPro 220",
+  "brand": "Vulcan (Harbor Freight)",
+  "sku": "63621",
+  "processes": ["MIG (GMAW)", "Flux-Cored (FCAW)", "TIG (GTAW) - DC Only", "Stick (SMAW)"],
+  "inputVoltage": ["120V", "240V"],
+  "inputPhase": "Single phase",
+  "inputFrequency": "60 Hz",
+  "maxAmperage": {
+    "120V": "140A",
+    "240V": "220A (MIG per manual output range; TIG/Stick lower — see amperageRange)"
+  },
+  "amperageRange": {
+    "MIG_120V": "25-140A",
+    "MIG_240V": "30-220A",
+    "TIG_120V": "10-140A",
+    "TIG_240V": "10-175A",
+    "Stick_120V": "25-140A",
+    "Stick_240V": "25-175A"
+  },
+  "openCircuitVoltage": "60V max",
+  "displayType": "LCD Synergic Control System",
+  "wireFeed": {
+    "speedRange": "60-600 IPM (inches per minute)",
+    "wireTypes": ["Solid MIG wire", "Flux-cored wire"],
+    "wireSizes": ["0.023\"", "0.030\"", "0.035\""],
+    "maxSpoolSize": "10 lb (8\" diameter spool)"
+  },
+  "weightLbs": 49,
+  "dimensions": "18.5\" L x 10\" W x 14\" H",
+  "powerCord": "NEMA 6-50P (240V) / adapter for NEMA 5-15P (120V)",
+  "warranty": "2 years",
+  "certifications": "CSA certified"
+}
