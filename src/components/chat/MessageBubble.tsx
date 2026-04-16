@@ -9,7 +9,7 @@ import type { ChatMessage, Citation } from "@/lib/use-agent-chat";
 import { CitationBadge } from "@/components/citations/CitationBadge";
 import { cn } from "@/lib/utils";
 import { PhaseStrip, ToolPillStrip, ReviewPanel } from "./AssistantActivity";
-import { useState, useCallback, type ComponentPropsWithoutRef } from "react";
+import { useState, type ComponentPropsWithoutRef } from "react";
 import DOMPurify from "dompurify";
 
 /* ── Types ───────────────────────────────────────────────────── */
@@ -59,7 +59,7 @@ function sanitizeSvg(raw: string): string {
 
 function extractInlineSvgs(text: string): ContentPiece[] {
   const pieces: ContentPiece[] = [];
-  let remaining = text;
+  const remaining = text;
   let searchFrom = 0;
 
   while (searchFrom < remaining.length) {
