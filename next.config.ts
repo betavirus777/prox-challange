@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   output: "standalone",
   serverExternalPackages: ["@anthropic-ai/sdk", "@lancedb/lancedb", "openai"],
   outputFileTracingIncludes: {
-    "/api/chat": ["./data/**/*", "./files/**/*"],
+    "/api/chat": ["./data/lancedb/**/*", "./knowledge/**/*"],
   },
   webpack: (config) => {
     config.resolve.alias.canvas = false;
