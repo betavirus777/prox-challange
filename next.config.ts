@@ -6,6 +6,12 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/api/chat": ["./data/lancedb/**/*", "./knowledge/**/*"],
   },
+  outputFileTracingExcludes: {
+    "/api/**/*": [
+      "./node_modules/@lancedb/lancedb-linux-x64-musl/**/*",
+      "./files/**/*",
+    ],
+  },
   webpack: (config) => {
     config.resolve.alias.canvas = false;
     return config;
