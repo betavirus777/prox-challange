@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import { Zap, Shield, Settings, AlertTriangle } from "lucide-react";
+import Image from "next/image";
 
 const STARTER_QUESTIONS = [
   {
@@ -32,40 +32,39 @@ interface StarterQuestionsProps {
 
 export function StarterQuestions({ onSelect }: StarterQuestionsProps) {
   return (
-    <div className="mx-auto flex max-w-2xl flex-col items-center px-4 py-12">
-      <div className="mb-4 flex gap-3">
+    <div className="mx-auto flex max-w-2xl flex-col items-center px-4 py-12 animate-fade-in">
+      <div className="relative mb-6 h-20 w-20">
         <Image
-          src="/product.webp"
-          alt="Vulcan OmniPro 220"
-          width={80}
-          height={80}
-          className="rounded-xl object-cover"
+          src="/orb.png"
+          alt="AI Assistant"
+          fill
+          className="rounded-full object-cover shadow-lg shadow-accent/10"
+          priority
         />
-        <Image
-          src="/product-inside.webp"
-          alt="Vulcan OmniPro 220 inside panel"
-          width={80}
-          height={80}
-          className="rounded-xl object-cover"
-        />
+        <div className="absolute -inset-1 rounded-full ring-1 ring-accent/20" />
       </div>
-      <h2 className="mb-1 text-lg font-semibold">Vulcan OmniPro 220 Assistant</h2>
-      <p className="mb-8 text-center text-sm text-muted-foreground">
+      <h2 className="mb-2 text-xl font-semibold tracking-tight">
+        How can I help?
+      </h2>
+      <p className="mb-8 max-w-md text-center text-sm text-muted-foreground leading-relaxed">
         Ask me anything about your welder — setup, specs, troubleshooting, or
         technique. I&apos;ll cite the exact manual page or video timestamp.
       </p>
 
-      <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
-        {STARTER_QUESTIONS.map((q) => (
+      <div className="grid w-full grid-cols-1 gap-2.5 sm:grid-cols-2">
+        {STARTER_QUESTIONS.map((q, index) => (
           <button
             key={q.text}
             onClick={() => onSelect(q.text)}
-            className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 text-left transition-colors hover:border-accent/50 hover:bg-card/80"
+            className="group flex items-start gap-3 rounded-xl border border-border/60 bg-card/50 p-4 text-left transition-all duration-200 hover:border-accent/30 hover:bg-card/80 hover:shadow-lg hover:shadow-accent/5 animate-fade-in"
+            style={{ animationDelay: `${100 + index * 70}ms` }}
           >
-            <q.icon className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/10 transition-colors group-hover:bg-accent/20">
+              <q.icon className="h-4 w-4 text-accent" />
+            </div>
             <div>
-              <p className="text-sm font-medium">{q.text}</p>
-              <p className="mt-0.5 text-xs text-muted-foreground">
+              <p className="text-sm font-medium leading-snug">{q.text}</p>
+              <p className="mt-1 text-xs text-muted-foreground/70">
                 {q.description}
               </p>
             </div>

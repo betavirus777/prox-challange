@@ -2,13 +2,14 @@
 
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { User, Bot } from "lucide-react";
+import { User, Bot, ImageIcon, ExternalLink } from "lucide-react";
 import { parseArtifacts, isArtifactPlaceholder } from "@/lib/parse-artifacts";
 import type { ParsedArtifact } from "@/lib/parse-artifacts";
 import type { ChatMessage, Citation } from "@/lib/use-agent-chat";
 import { CitationBadge } from "@/components/citations/CitationBadge";
 import { cn } from "@/lib/utils";
 import { PhaseStrip, ToolPillStrip, ReviewPanel } from "./AssistantActivity";
+import { useState, type ComponentPropsWithoutRef } from "react";
 
 interface MessageBubbleProps {
   message: ChatMessage;
@@ -19,11 +20,11 @@ interface MessageBubbleProps {
 export function MessageBubble({ message, onArtifactClick, onCitationClick }: MessageBubbleProps) {
   if (message.role === "user") {
     return (
-      <div className="flex items-start gap-3">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted ring-1 ring-border">
-          <User className="h-4 w-4 text-muted-foreground" />
+      <div className="flex items-start gap-4 flex-row-reverse ml-auto max-w-[85%] sm:max-w-[75%] animate-fade-in pt-4">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-accent to-orange-600 shadow-md ring-1 ring-white/10">
+          <User className="h-4 w-4 text-white" />
         </div>
-        <div className="mt-1.5 max-w-[min(100%,42rem)] rounded-2xl rounded-tl-md border border-border bg-muted/30 px-4 py-3 text-sm leading-relaxed text-foreground">
+        <div className="rounded-2xl rounded-tr-sm bg-accent/10 px-5 py-3.5 text-[15px] leading-relaxed text-foreground shadow-sm ring-1 ring-accent/20">
           {message.content}
         </div>
       </div>
@@ -41,24 +42,24 @@ export function MessageBubble({ message, onArtifactClick, onCitationClick }: Mes
   const isStreaming = Boolean(message.statusLine) || message.toolCalls.some((t) => t.state === "calling");
 
   return (
-    <div className="flex items-start gap-3">
+    <div className="flex items-start gap-4 max-w-[95%] sm:max-w-[85%] pt-4">
       <div
         className={cn(
-          "relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full",
-          "bg-gradient-to-br from-accent/25 to-accent/5 ring-2 ring-accent/25",
-          isStreaming && "shadow-[0_0_20px_-4px_rgba(249,115,22,0.45)]"
+          "relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
+          "bg-gradient-to-br from-accent/20 to-accent/5 ring-1 ring-accent/30 shadow-sm",
+          isStreaming && "shadow-[0_0_15px_-3px_rgba(249,115,22,0.4)]"
         )}
       >
         <Bot className="h-4 w-4 text-accent" />
         {isStreaming && (
           <span
-            className="absolute inset-0 rounded-full border border-accent/40 animate-ping opacity-40"
+            className="absolute inset-0 rounded-full border border-accent/40 animate-ping opacity-30"
             aria-hidden
           />
         )}
       </div>
 
-      <div className="min-w-0 flex-1 space-y-3">
+      <div className="min-w-0 flex-1 space-y-3.5 pt-1">
         <PhaseStrip statusLine={message.statusLine} phaseId={message.phaseId} />
         <ToolPillStrip toolCalls={message.toolCalls} />
 
@@ -79,6 +80,126 @@ export function MessageBubble({ message, onArtifactClick, onCitationClick }: Mes
   );
 }
 
+/* ── Inline image lightbox ───────────────────────────────────── */
+
+function InlineImage(props: ComponentPropsWithoutRef<"img">) {
+  const [expanded, setExpanded] = useState(false);
+  const { src, alt } = props;
+  if (!src) return null;
+
+  return (
+    <>
+      <span
+        className="group relative my-2 inline-block cursor-pointer overflow-hidden rounded-xl border border-border/60 bg-muted/20 transition-all hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5"
+        onClick={() => setExpanded(true)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === "Enter" && setExpanded(true)}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={src}
+          alt={alt || "Image"}
+          className="max-h-[400px] max-w-full rounded-xl object-contain"
+          loading="lazy"
+        />
+        <span className="absolute bottom-2 right-2 flex items-center gap-1 rounded-lg bg-black/60 px-2 py-1 text-[10px] text-white/80 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
+          <ImageIcon className="h-3 w-3" />
+          Click to expand
+        </span>
+      </span>
+
+      {/* Lightbox */}
+      {expanded && (
+        <span
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md animate-fade-in cursor-zoom-out"
+          onClick={() => setExpanded(false)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === "Escape" && setExpanded(false)}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={src}
+            alt={alt || "Image"}
+            className="max-h-[90vh] max-w-[90vw] rounded-xl object-contain shadow-2xl animate-scale-in"
+          />
+        </span>
+      )}
+    </>
+  );
+}
+
+/* ── Inline SVG renderer ─────────────────────────────────── */
+
+function InlineSvg({ code }: { code: string }) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <>
+      <span
+        className="group relative my-2 inline-block cursor-pointer overflow-hidden rounded-xl border border-border/60 bg-white/95 p-3 transition-all hover:border-accent/30 hover:shadow-lg"
+        onClick={() => setExpanded(true)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === "Enter" && setExpanded(true)}
+      >
+        <span
+          className="block max-h-[400px] overflow-auto [&_svg]:max-w-full [&_svg]:h-auto"
+          dangerouslySetInnerHTML={{ __html: code }}
+        />
+        <span className="absolute bottom-2 right-2 flex items-center gap-1 rounded-lg bg-black/60 px-2 py-1 text-[10px] text-white/80 opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
+          <ExternalLink className="h-3 w-3" />
+          Click to expand
+        </span>
+      </span>
+
+      {expanded && (
+        <span
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md animate-fade-in cursor-zoom-out"
+          onClick={() => setExpanded(false)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === "Escape" && setExpanded(false)}
+        >
+          <span
+            className="max-h-[90vh] max-w-[90vw] overflow-auto rounded-xl bg-white p-6 shadow-2xl animate-scale-in [&_svg]:max-w-full [&_svg]:h-auto"
+            dangerouslySetInnerHTML={{ __html: code }}
+          />
+        </span>
+      )}
+    </>
+  );
+}
+
+/* ── Extract inline SVGs from text ─────────────────────────── */
+
+interface ContentPiece {
+  type: "text" | "svg";
+  content: string;
+}
+
+function extractInlineSvgs(text: string): ContentPiece[] {
+  const SVG_REGEX = /<svg[\s\S]*?<\/svg>/gi;
+  const pieces: ContentPiece[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = SVG_REGEX.exec(text)) !== null) {
+    const before = text.slice(lastIndex, match.index).trim();
+    if (before) pieces.push({ type: "text", content: before });
+    pieces.push({ type: "svg", content: match[0] });
+    lastIndex = match.index + match[0].length;
+  }
+
+  const remaining = text.slice(lastIndex).trim();
+  if (remaining) pieces.push({ type: "text", content: remaining });
+
+  return pieces;
+}
+
+/* ── Main markdown body ──────────────────────────────────── */
+
 function AssistantMarkdownBody({
   content,
   citations,
@@ -94,12 +215,7 @@ function AssistantMarkdownBody({
   const uniqueCitations = deduplicateCitations(citations);
 
   return (
-    <div
-      className={cn(
-        "rounded-2xl rounded-tl-md border border-border/90 bg-card/40 px-4 py-3 shadow-sm",
-        "ring-1 ring-white/[0.03] backdrop-blur-sm"
-      )}
-    >
+    <div className={cn("flex flex-col space-y-4 overflow-hidden break-words text-[15px] leading-relaxed text-foreground/90")}>
       <div className="space-y-3">
         {textSegments.map((segment, i) => {
           const artifactIndex = isArtifactPlaceholder(segment);
@@ -127,15 +243,46 @@ function AssistantMarkdownBody({
             );
           }
 
+          // Check for inline SVGs in the text
+          const pieces = extractInlineSvgs(segment);
+          const hasSvgs = pieces.some((p) => p.type === "svg");
+
+          if (hasSvgs) {
+            return (
+              <div key={i} className="space-y-3">
+                {pieces.map((piece, j) => {
+                  if (piece.type === "svg") {
+                    return <InlineSvg key={j} code={piece.content} />;
+                  }
+                  return (
+                    <div key={j} className="prose prose-invert prose-sm max-w-full text-sm leading-relaxed prose-headings:scroll-mt-4 prose-p:leading-relaxed break-words overflow-hidden break-all sm:break-normal">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={markdownComponents}
+                      >
+                        {piece.content}
+                      </ReactMarkdown>
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          }
+
           return (
-            <div key={i} className="prose prose-invert prose-sm max-w-none text-sm leading-relaxed prose-headings:scroll-mt-4 prose-p:leading-relaxed">
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>{segment}</ReactMarkdown>
+            <div key={i} className="prose prose-invert prose-sm max-w-full text-sm leading-relaxed prose-headings:scroll-mt-4 prose-p:leading-relaxed break-words overflow-hidden break-all sm:break-normal">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={markdownComponents}
+              >
+                {segment}
+              </ReactMarkdown>
             </div>
           );
         })}
 
         {uniqueCitations.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 border-t border-border/60 pt-3">
+          <div className="flex flex-wrap items-center gap-2 pt-2 mt-2">
             {uniqueCitations.map((c, i) => (
               <CitationBadge
                 key={i}
@@ -151,6 +298,14 @@ function AssistantMarkdownBody({
     </div>
   );
 }
+
+/* ── Custom markdown renderers for images ─────────────────── */
+
+const markdownComponents = {
+  img: InlineImage,
+};
+
+/* ── Helpers ──────────────────────────────────────────────── */
 
 function deduplicateCitations(citations: Citation[]): Citation[] {
   const seen = new Set<string>();

@@ -38,4 +38,3 @@ next-env.d.ts
 
 # project-specific
 .file-cache.json
-/data/lancedb

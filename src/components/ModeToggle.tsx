@@ -10,13 +10,13 @@ interface ModeToggleProps {
 
 export function ModeToggle({ mode, onModeChange }: ModeToggleProps) {
   return (
-    <div className="flex items-center gap-1 rounded-lg bg-muted p-1">
+    <div className="flex items-center gap-0.5 rounded-xl bg-muted/80 p-1 ring-1 ring-border/50">
       <button
         onClick={() => onModeChange("text")}
         className={cn(
-          "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+          "flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all duration-200",
           mode === "text"
-            ? "bg-background text-foreground shadow-sm"
+            ? "bg-background text-foreground shadow-sm ring-1 ring-border/50"
             : "text-muted-foreground hover:text-foreground"
         )}
       >
@@ -26,9 +26,9 @@ export function ModeToggle({ mode, onModeChange }: ModeToggleProps) {
       <button
         onClick={() => onModeChange("voice")}
         className={cn(
-          "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+          "flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all duration-200",
           mode === "voice"
-            ? "bg-background text-foreground shadow-sm"
+            ? "bg-background text-foreground shadow-sm ring-1 ring-border/50"
             : "text-muted-foreground hover:text-foreground"
         )}
       >

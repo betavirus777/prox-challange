@@ -1,6 +1,13 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
+import {
+  saveConversation,
+  loadConversation,
+  getActiveConversationId,
+  createNewConversation,
+  setActiveConversationId,
+} from "./conversation-store";
 
 export interface Citation {
   type: string;
@@ -35,7 +42,7 @@ export interface ChatMessage {
 function applySSEEvent(
   msg: ChatMessage,
   event: string,
-  data: Record<string, unknown>
+  data: Record<string, unknown>,
 ): ChatMessage {
   switch (event) {
     case "text":
@@ -69,7 +76,7 @@ function applySSEEvent(
       return {
         ...msg,
         toolCalls: msg.toolCalls.map((tc) =>
-          tc.name === data.name ? { ...tc, state: "done" as const } : tc
+          tc.name === data.name ? { ...tc, state: "done" as const } : tc,
         ),
       };
 
@@ -113,11 +120,61 @@ export function useAgentChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [conversationId, setConversationId] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+
+  // Restore active conversation on mount
+  useEffect(() => {
+    const activeId = getActiveConversationId();
+    if (activeId) {
+      const stored = loadConversation(activeId);
+      if (stored && stored.messages.length > 0) {
+        setConversationId(activeId);
+        setMessages(stored.messages);
+      }
+    }
+  }, []);
+
+  // Persist messages whenever they change (debounced)
+  useEffect(() => {
+    if (!conversationId || messages.length === 0) return;
+    // Only save completed messages (not mid-stream)
+    const hasStreaming = messages.some((m) => m.statusLine);
+    if (hasStreaming) return;
+    saveConversation(conversationId, messages);
+  }, [messages, conversationId]);
+
+  const startNewConversation = useCallback(() => {
+    const id = createNewConversation();
+    setConversationId(id);
+    setMessages([]);
+    setError(null);
+    setIsLoading(false);
+    abortRef.current?.abort();
+    return id;
+  }, []);
+
+  const loadExistingConversation = useCallback((id: string) => {
+    const stored = loadConversation(id);
+    if (stored) {
+      setConversationId(id);
+      setActiveConversationId(id);
+      setMessages(stored.messages);
+      setError(null);
+      setIsLoading(false);
+    }
+  }, []);
 
   const sendMessage = useCallback(
     async (userContent: string) => {
       if (!userContent.trim() || isLoading) return;
+
+      // Ensure we have a conversation ID
+      let currentConvId = conversationId;
+      if (!currentConvId) {
+        currentConvId = createNewConversation();
+        setConversationId(currentConvId);
+      }
 
       setError(null);
       const userMsg: ChatMessage = {
@@ -160,7 +217,7 @@ export function useAgentChat() {
         if (!response.ok) {
           const errData = await response.json().catch(() => ({}));
           throw new Error(
-            errData.error || `HTTP ${response.status}: ${response.statusText}`
+            errData.error || `HTTP ${response.status}: ${response.statusText}`,
           );
         }
 
@@ -169,7 +226,6 @@ export function useAgentChat() {
 
         const decoder = new TextDecoder();
         let buffer = "";
-        /** Must persist across TCP chunks — was reset inside the loop and dropped every `data:` after a split `event:`/`data:` pair. */
         let pendingEvent = "";
 
         while (true) {
@@ -193,11 +249,10 @@ export function useAgentChat() {
                 pendingEvent = "";
                 setMessages((prev) =>
                   prev.map((m) =>
-                    m.id === assistantId ? applySSEEvent(m, ev, data) : m
-                  )
+                    m.id === assistantId ? applySSEEvent(m, ev, data) : m,
+                  ),
                 );
               } catch {
-                // skip malformed data — restore event name if parse failed (unlikely)
                 pendingEvent = "";
               }
             }
@@ -210,22 +265,59 @@ export function useAgentChat() {
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantId && !m.content
-              ? { ...m, content: "Sorry, something went wrong. Please try again." }
-              : m
-          )
+              ? {
+                  ...m,
+                  content: "Sorry, something went wrong. Please try again.",
+                  statusLine: undefined,
+                  phaseId: undefined,
+                }
+              : m,
+          ),
         );
       } finally {
         setIsLoading(false);
         abortRef.current = null;
       }
     },
-    [messages, isLoading]
+    [messages, isLoading, conversationId],
   );
 
   const stop = useCallback(() => {
     abortRef.current?.abort();
     setIsLoading(false);
+    // Clean up the streaming message
+    setMessages((prev) =>
+      prev.map((m) =>
+        m.statusLine ? { ...m, statusLine: undefined, phaseId: undefined } : m,
+      ),
+    );
   }, []);
 
-  return { messages, isLoading, error, sendMessage, stop };
+  const retryLast = useCallback(() => {
+    const lastUser = [...messages].reverse().find((m) => m.role === "user");
+    if (!lastUser) return;
+    // Remove last assistant message
+    setMessages((prev) => {
+      const idx = prev.length - 1;
+      if (idx >= 0 && prev[idx].role === "assistant") {
+        return prev.slice(0, idx);
+      }
+      return prev;
+    });
+    setError(null);
+    // Re-send
+    setTimeout(() => sendMessage(lastUser.content), 50);
+  }, [messages, sendMessage]);
+
+  return {
+    messages,
+    isLoading,
+    error,
+    conversationId,
+    sendMessage,
+    stop,
+    retryLast,
+    startNewConversation,
+    loadExistingConversation,
+  };
 }
