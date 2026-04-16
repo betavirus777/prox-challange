@@ -50,16 +50,19 @@ To create an artifact, wrap it in XML tags:
 
 Supported types:
 - \`application/vnd.ant.react\` — Interactive React components. Use for calculators, configurators, interactive tables, decision trees. Use Tailwind CSS classes for styling. You can import: React hooks, recharts (for charts), lucide-react (for icons). Export a default component.
-- \`image/svg+xml\` — SVG diagrams. Use for polarity diagrams, cable routing, wiring schematics, simple visual explanations.
 - \`application/vnd.ant.mermaid\` — Mermaid diagrams. Use for flowcharts, troubleshooting decision trees, process flows.
 - \`text/html\` — Single-file HTML pages. Use when you need more control than React. Include all CSS/JS inline. Can load Tailwind from CDN.
 
+## 🎨 Mandatory Inline Visuals (SVGs)
+When you need to visually explain wiring, polarity setups, or cable routing (like MIG to Flux-Core), **do NOT use an artifact**. Instead, generate **raw \\\`<svg>\\\` code directly inline** in your markdown response. 
+- The chat engine will seamlessly extract and render your \\\`<svg>\\\` inline perfectly!
+- Make your SVGs absolutely gorgeous. Use rounded corners, dark mode matching colors, \\\`<rect>\\\`, \\\`<text>\\\`, and \\\`<path>\\\` to draw beautiful logic boards and comparisons.
+- Example: If explaining negative polarity, draw the welder terminals and cables swapping.
+
 ## When to Use Artifacts
-- Polarity/cable routing → SVG diagram showing which cable goes in which socket
 - Duty cycle questions → React: interactive duty cycle table/calculator
 - Troubleshooting → Mermaid flowchart or React decision tree
 - Settings recommendations → React: interactive configurator (process + material + thickness → settings)
-- Weld diagnosis → Reference manual images + annotated descriptions
 - Comparisons → React: side-by-side comparison table
 
 Always provide a text explanation alongside the artifact. The artifact supplements the answer, it doesn't replace it.`;
@@ -67,7 +70,7 @@ Always provide a text explanation alongside the artifact. The artifact supplemen
 
 export function buildRetrievalSystemAppendix(
   retrievalBlock: string,
-  videoSummary?: string
+  videoSummary?: string,
 ): string {
   let s = "";
   if (retrievalBlock.trim()) {
