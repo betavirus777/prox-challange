@@ -175,12 +175,12 @@ function InlineSvg({ code }: { code: string }) {
 /* ── Extract inline SVGs from text ─────────────────────────── */
 
 interface ContentPiece {
-  type: "text" | "svg";
+  type: "text" | "svg" | "loading_svg";
   content: string;
 }
 
 function extractInlineSvgs(text: string): ContentPiece[] {
-  const SVG_REGEX = /<svg[\s\S]*?<\/svg>/gi;
+  const SVG_REGEX = /<svg[\s\S]*?(?:<\/svg>|$)/gi;
   const pieces: ContentPiece[] = [];
   let lastIndex = 0;
   let match: RegExpExecArray | null;
@@ -188,14 +188,25 @@ function extractInlineSvgs(text: string): ContentPiece[] {
   while ((match = SVG_REGEX.exec(text)) !== null) {
     const before = text.slice(lastIndex, match.index).trim();
     if (before) pieces.push({ type: "text", content: before });
-    pieces.push({ type: "svg", content: match[0] });
+    
+    if (match[0].toLowerCase().endsWith("</svg>")) {
+      pieces.push({ type: "svg", content: match[0] });
+    } else {
+      pieces.push({ type: "loading_svg", content: match[0] });
+    }
+    
     lastIndex = match.index + match[0].length;
   }
 
   const remaining = text.slice(lastIndex).trim();
   if (remaining) pieces.push({ type: "text", content: remaining });
 
-  return pieces;
+  // If we had no matches but the text looks like it might be starting an SVG...
+  if (pieces.length === 0 && text.includes("<sv")) {
+    // Just return as text and let markdown handle it safely as code/text until it completes.
+  }
+
+  return pieces.length > 0 ? pieces : [{ type: "text", content: text }];
 }
 
 /* ── Main markdown body ──────────────────────────────────── */
@@ -215,8 +226,8 @@ function AssistantMarkdownBody({
   const uniqueCitations = deduplicateCitations(citations);
 
   return (
-    <div className={cn("flex flex-col space-y-4 overflow-hidden break-words text-[15px] leading-relaxed text-foreground/90")}>
-      <div className="space-y-3">
+    <div className={cn("flex flex-col space-y-4 overflow-hidden break-words text-[15px] leading-relaxed text-foreground/90 rounded-2xl rounded-tl-sm bg-card/60 px-5 py-4 shadow-sm ring-1 ring-white/5 backdrop-blur-sm")}>
+      <div className="space-y-4">
         {textSegments.map((segment, i) => {
           const artifactIndex = isArtifactPlaceholder(segment);
           if (artifactIndex !== null && artifacts[artifactIndex]) {
@@ -245,17 +256,30 @@ function AssistantMarkdownBody({
 
           // Check for inline SVGs in the text
           const pieces = extractInlineSvgs(segment);
-          const hasSvgs = pieces.some((p) => p.type === "svg");
+          const hasSvgs = pieces.some((p) => p.type === "svg" || p.type === "loading_svg");
 
           if (hasSvgs) {
             return (
-              <div key={i} className="space-y-3">
+              <div key={i} className="space-y-4">
                 {pieces.map((piece, j) => {
                   if (piece.type === "svg") {
                     return <InlineSvg key={j} code={piece.content} />;
                   }
+                  if (piece.type === "loading_svg") {
+                    return (
+                      <div key={j} className="my-2 flex h-40 w-full animate-pulse items-center justify-center rounded-xl border border-border/60 bg-muted/20">
+                        <div className="flex flex-col items-center gap-3 text-muted-foreground">
+                          <svg className="h-6 w-6 animate-spin text-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          <span className="text-sm font-medium">Drawing diagram...</span>
+                        </div>
+                      </div>
+                    );
+                  }
                   return (
-                    <div key={j} className="prose prose-invert prose-sm max-w-full text-sm leading-relaxed prose-headings:scroll-mt-4 prose-p:leading-relaxed break-words overflow-hidden break-all sm:break-normal">
+                    <div key={j} className="prose prose-invert max-w-full text-[15px] leading-relaxed prose-headings:scroll-mt-4 prose-p:leading-relaxed break-words overflow-hidden break-all sm:break-normal">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={markdownComponents}
@@ -270,7 +294,7 @@ function AssistantMarkdownBody({
           }
 
           return (
-            <div key={i} className="prose prose-invert prose-sm max-w-full text-sm leading-relaxed prose-headings:scroll-mt-4 prose-p:leading-relaxed break-words overflow-hidden break-all sm:break-normal">
+            <div key={i} className="prose prose-invert max-w-full text-[15px] leading-relaxed prose-headings:scroll-mt-4 prose-p:leading-relaxed break-words overflow-hidden break-all sm:break-normal">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={markdownComponents}
